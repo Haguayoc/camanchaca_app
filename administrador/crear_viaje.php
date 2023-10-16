@@ -29,7 +29,7 @@
                         <div class="card">
                             <div style="padding: 20px;" class="card-body">
                                 <h1 style="align-self: center; margin-bottom: 25px;">CREAR VIAJE</h1>
-                                <form method="post" action="">
+                                <form method="post" style="width: auto;" action="">
                                     <?php echo $msgError;?>
                                     <?php echo $msgSucess;?>
                                 <div class="div-lado">
@@ -66,13 +66,15 @@
                                     </select>
                                 </div>
                                 <br>
-                                <input class="btn" name="btncrearviaje" type="submit" value="Crear Viaje">
-                                <button style="background-color: #C76868;" class="btn"><a style="color: black;" href="inicio_administradores.php">Volver</a></button>
+                                <input class="btn blue" name="btncrearviaje" type="submit" value="Crear Viaje">
+                                <button type="button" class="btn blue" onclick="redirigir_ver_viajes()">Ver Viajes</button>
+                                <button type="button" onclick="volver_inicio_admin_transporte()" class="btn red">Volver</button>
                             </div>
                             </form>
                         </div>
                     </div>
                 </div>
     </div>
+    <script src="../main.js"></script>
 </body>
 </html>

@@ -13,8 +13,10 @@ if (!empty($_POST["btncrearviaje"])) {
     if (empty($fecha) || empty($idgrupo) || empty($idvehiculo) || empty($idconductor)) {
         $msgError = '<div class="alert alert-danger">Los campos fecha, grupo, vehículo y conductor no pueden estar vacíos</div>';
     } else {
-        $sql = "INSERT INTO viaje (fecha, id_grupo, id_vehiculo, rut_conductor) VALUES ('$fecha', '$idgrupo', '$idvehiculo', '$idconductor')";
+        $sql = "INSERT INTO viaje_ida (fecha, id_grupo, id_vehiculo, rut_conductor) VALUES ('$fecha', '$idgrupo', '$idvehiculo', '$idconductor')";
         $resultado = $conexion->query($sql);
+        $sql2 = "INSERT INTO viaje_vuelta (fecha, id_grupo, id_vehiculo, rut_conductor) VALUES ('$fecha', '$idgrupo', '$idvehiculo', '$idconductor')";
+        $resultado2 = $conexion->query($sql2);
 
         if ($resultado === TRUE) {
             $_SESSION['mensaje'] = 'El viaje se ha creado correctamente';

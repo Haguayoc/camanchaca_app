@@ -25,9 +25,9 @@
                         <div class="card">
                             <div class="card-body">
                             <h1 class="title">Bienvenido <?php echo $_SESSION['nombre']." ".$_SESSION["apellido_paterno"]." ".$_SESSION["apellido_materno"] ?></h1>
-                                  <button class="btn" onclick="redirigir_crear_viaje()"><a>Crear Viaje</a></button>
-                                  <button  class="btn" onclick="redirigir_ver_viajes()">Ver Viajes</button>
-                                  <button  id="btnsalir" class="btn" onclick="cerrar_sesion()" ><a>Cerrar sesión</a></button>
+                                  <button class="btn blue" onclick="redirigir_crear_viaje()">Crear Viaje</button>
+                                  <button  class="btn blue" onclick="redirigir_ver_viajes()">Ver Viajes</button>
+                                  <button  id="btnsalir" class="btn red" onclick="cerrar_sesion()" >Cerrar Sesión</button>
                             </div>
                         </div>
                     </div>

@@ -18,12 +18,12 @@ include_once("controlador/controlador_login.php");
     </head>
     <body>
         <main class="container-form">
-            <form style="display:flex; align-items: center; justify-content: center;" id="miFormulario" method="post" action="">
+            <form style="display:flex; align-items: center; justify-content: center; width: auto;" id="miFormulario" method="post" action="">
                 <img  id="logo" src="img/image.png" width="234"/>
                 <div id="mensajeRut" ></div>
                 <label for="">
                     <i class="fa-solid fa-user"></i>
-                    <input  type="text" maxlength="8" placeholder="RUT" id="rut" name="rut">
+                    <input  type="text" maxlength="10" placeholder="RUT" id="rut" name="rut">
                 </label>
                 <div id="mensajeContraseña"></div>
                 <label for="">

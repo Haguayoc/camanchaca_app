@@ -9,7 +9,7 @@ if (!empty($_POST["btningresar"])) {
         $msgError= '<div class="alert alert-danger">Los Campos Rut y Password no pueden estar vacios</div>';
         
     } else {
-        $rut = $_POST["rut"];
+        $rut = explode('-',$_POST["rut"])[0];
 
         $rut_list = array_reverse(str_split($rut));
         $x = 2;

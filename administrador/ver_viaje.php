@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-body boxBlanco">
                                 <h2 class="title">Sr(a). <?php echo $_SESSION['nombre']." ".$_SESSION["apellido_paterno"]." ".$_SESSION["apellido_materno"] ?> </h2>
                                 <h5 class="title">Acá puede buscar los viajes con filtros:</h5>
                                 <form action="./ver_viaje.php" method="POST">
@@ -67,7 +67,7 @@
                                     </div>
                               
                                     <br>
-                                    <input class="btn" style="color:black" name="btnBuscarViaje" type="submit" value="Buscar">
+                                    <input class="btn blue" name="btnBuscarViaje" type="submit" value="Buscar">
                                 </form>
                                 <br>
 
@@ -106,8 +106,10 @@
                                 
                                 <?php
 
-                                    $sql = 'SELECT v.id_grupo, v.fecha,(SELECT nombre FROM grupo WHERE id=v.id_grupo) grupo,(SELECT patente FROM vehiculo WHERE id=v.id_vehiculo) vehiculo, (SELECT CONCAT(nombre," ",apellido_paterno," ", apellido_materno) conductor FROM usuario WHERE id=v.rut_conductor) nombre FROM viaje v ';
+                                    $sql = 'SELECT v.id_grupo, v.fecha,(SELECT nombre FROM grupo WHERE id=v.id_grupo) grupo,(SELECT hora_entrada FROM turno WHERE id=(SELECT id_turno FROM grupo WHERE id = v.id_grupo)) turno ,(SELECT patente FROM vehiculo WHERE id=v.id_vehiculo) vehiculo, (SELECT CONCAT(nombre," ",apellido_paterno," ", apellido_materno) conductor FROM usuario WHERE id=v.rut_conductor) nombre FROM viaje_ida v WHERE fecha =  CURDATE()';
                                     $resultado = $conexion->query($sql);
+                                    $sql2 = 'SELECT v.id_grupo, v.fecha,(SELECT nombre FROM grupo WHERE id=v.id_grupo) grupo,(SELECT hora_salida FROM turno WHERE id=(SELECT id_turno FROM grupo WHERE id = v.id_grupo)) turno ,(SELECT patente FROM vehiculo WHERE id=v.id_vehiculo) vehiculo, (SELECT CONCAT(nombre," ",apellido_paterno," ", apellido_materno) conductor FROM usuario WHERE id=v.rut_conductor) nombre FROM viaje_vuelta v WHERE fecha = CURDATE()';
+                                    $resultado2 = $conexion->query($sql2);
                                     if(isset($_POST['btnBuscarViaje'])){
                                         $fecha = $_POST['select_fecha'];
                                         $grupo = $_POST['select_grupo'];
@@ -135,43 +137,86 @@
                                             $datos[] = " v.rut_conductor = $conductor";
                                         }
                                     
-                                        $sql = 'SELECT v.id_grupo, v.fecha,(SELECT nombre FROM grupo WHERE id=v.id_grupo) grupo,(SELECT patente FROM vehiculo WHERE id=v.id_vehiculo) vehiculo, (SELECT CONCAT(nombre," ",apellido_paterno," ", apellido_materno) conductor FROM usuario WHERE id=v.rut_conductor) nombre FROM viaje v ';
+                                        $sql = 'SELECT v.id_grupo, v.fecha,(SELECT nombre FROM grupo WHERE id=v.id_grupo) grupo,(SELECT hora_entrada FROM turno WHERE id=(SELECT id_turno FROM grupo WHERE id=v.id_grupo)) turno ,(SELECT patente FROM vehiculo WHERE id=v.id_vehiculo) vehiculo, (SELECT CONCAT(nombre," ",apellido_paterno," ", apellido_materno) conductor FROM usuario WHERE id=v.rut_conductor) nombre FROM viaje_ida v ';
+                                        $sql2 = 'SELECT v.id_grupo, v.fecha,(SELECT nombre FROM grupo WHERE id=v.id_grupo) grupo,(SELECT hora_salida FROM turno WHERE id=(SELECT id_turno FROM grupo WHERE id=v.id_grupo)) turno ,(SELECT patente FROM vehiculo WHERE id=v.id_vehiculo) vehiculo, (SELECT CONCAT(nombre," ",apellido_paterno," ", apellido_materno) conductor FROM usuario WHERE id=v.rut_conductor) nombre FROM viaje_vuelta v ';
                                         if(!empty($datos)){
                                             $sql.=' WHERE '. implode(' AND ', $datos);
+                                            $sql2.=' WHERE '. implode(' AND ', $datos);
                                         }
                                         $resultado = $conexion->query($sql);
+                                        $resultado2 = $conexion->query($sql2);
 
                                     }
                                 ?>
 
-
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Fecha</th>
-                                                <th scope="col">Conductor</th>
-                                                <th scope="col">Patente</th>
-                                                <th scope="col">Turno de Ruta</th>
-                                                <th scope="col">Ver</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            foreach ($resultado as $resultados){
-                                                $date = explode('-', $resultados['fecha']);
-                                                $date = $date[2] . '-' . $date[1] . '-' . $date[0];
-                                            ?>
-                                            <tr>
-                                                <td><?= $date ?></td>
-                                                <td><?= $resultados['nombre'] ?></td>
-                                                <td><?= $resultados['vehiculo'] ?></td>
-                                                <td><?= $resultados['grupo'] ?></td>
-                                                <td><button id="btnVerPasajerosViaje" data-id-grupo="<?= $resultados['id_grupo'] ?>" class="btn verde">Ver Pasajeros</button></td>
-                                            </tr>
-                                            <?php } ?>
-                                        </tbody>
-                                    </table>
+                                <div class="btn-group">
+                                    <button class="btn blue" id="ida">Ida</button>
+                                    <button class="btn blue" id="vuelta">Vuelta</button>
+                                    <button class="btn blue" id="todos">Todos</button>
+                                </div>
+                                <div style="margin-bottom: 10px;" class="div-lado" >
+                                    <div class="table-responsive" style="padding-top: 10px; border-radius: 15px; box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.2);">
+                                    <h4 class="textoViaje">Viajes de Ida</h4>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Fecha</th>
+                                                    <th scope="col">Conductor</th>
+                                                    <th scope="col">Patente</th>
+                                                    <th scope="col">Grupo</th>
+                                                    <th scope="col">Hora Entrada</th>
+                                                    <th scope="col">Ver Pasajeros</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                foreach ($resultado as $resultados){
+                                                    $date = explode('-', $resultados['fecha']);
+                                                    $date = $date[2] . '-' . $date[1] . '-' . $date[0];
+                                                ?>
+                                                <tr>
+                                                    <td><?= $date ?></td>
+                                                    <td><?= $resultados['nombre'] ?></td>
+                                                    <td><?= $resultados['vehiculo'] ?></td>
+                                                    <td><?= $resultados['grupo'] ?></td>
+                                                    <td><?= $resultados['turno'] ?></td>
+                                                    <td><button id="btnVerPasajerosViaje" data-id-grupo="<?= $resultados['id_grupo'] ?>" class="btn verde">Ver</button></td>
+                                                </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive" style="padding-top: 10px; border-radius: 15px; box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.2);">
+                                    <h4 class="textoViaje">Viajes de Vuelta</h4>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Fecha</th>
+                                                    <th scope="col">Conductor</th>
+                                                    <th scope="col">Patente</th>
+                                                    <th scope="col">Grupo</th>
+                                                    <th scope="col">Hora Salida</th>
+                                                    <th scope="col">Ver Pasajeros</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                foreach ($resultado2 as $resultados2){
+                                                    $date = explode('-', $resultados2['fecha']);
+                                                    $date = $date[2] . '-' . $date[1] . '-' . $date[0];
+                                                ?>
+                                                <tr>
+                                                    <td><?= $date ?></td>
+                                                    <td><?= $resultados2['nombre'] ?></td>
+                                                    <td><?= $resultados2['vehiculo'] ?></td>
+                                                    <td><?= $resultados2['grupo'] ?></td>
+                                                    <td><?= $resultados2['turno'] ?></td>
+                                                    <td><button id="btnVerPasajerosViaje" data-id-grupo="<?= $resultados2['id_grupo'] ?>" class="btn verde">Ver</button></td>
+                                                </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
 
                                 <?php 
@@ -186,8 +231,8 @@
                                 
                                 ?>    
                                 <div class="div-lado">
-                                    <button class="btn blue"><a style="color: black;" href="crear_viaje.php">Crear viaje</a></button>
-                                    <button class="btn red"><a style="color: black;" href="inicio_administradores.php">Volver</a></button>
+                                    <button class="btn blue" onclick="redirigir_crear_viaje()">Ver Viaje</button>
+                                    <button class="btn red" onclick="volver_inicio_admin_transporte()">Volver</button>
                                 </div>
                             </div>
                         </div>
@@ -202,6 +247,10 @@
                         <div class="tabla-bg">
                             <div class="title-table">
                                 <span id="cerrarPopup" class="cerrar">&times;</span>
+                                <div class="info">
+                                    <span id="fechaViaje" class="fecha"></span>
+                                    <span id="conductorViaje" class="conductor"></span>
+                                </div>
                                 <h2 >Trabajadores del grupo</h2>
                             </div>
                             <table id="miTabla" class="table tabla-trabajador">
@@ -227,5 +276,6 @@
                 
             </div> -->
             <script src="../verPasajerosViaje.js"></script>
+            <script src="../main.js"></script>
         </body>
 </html>

@@ -22,7 +22,9 @@ function cerrar_sesion(){
 function redirigir_crear_viaje(){
     window.location.href = "crear_viaje.php";
 }
-
+function volver_inicio_admin_transporte() {
+    window.location.href = "inicio_administradores.php";
+}
 function redirigir_ver_viajes(){
     window.location.href = "ver_viaje.php";
 }
